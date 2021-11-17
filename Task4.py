@@ -1,59 +1,31 @@
 # Task 4 – Process-based CPU Problem Diagnoser
+import time
 import psutil
 
-cpuUsageHistory = list()
-processCountHistory = list()
-problemRootCauseFound = False
-checkInterval = 5
-historyDuration = 120
-warningThreshold = 90
-currentProcessCount = 0
-currentCpuUsage = 0
+processHistoryUsage = dict()
+processCurrentUsage = dict()
+processWarningThreshold = 10
+checkInterval = 300
+cpuCores = psutil.cpu_count()
 
-
-def average(listToAvg):
-    return sum(listToAvg) / len(listToAvg)
-
-
-x = historyDuration
-while x > 0:
-    cpuUsageHistory.append(psutil.cpu_percent(interval=checkInterval))
-    processCountHistory.append(len(psutil.pids()))
-    x -= checkInterval
-
+for process in psutil.process_iter():
+    process.cpu_percent()
 while True:
     for process in psutil.process_iter():
-        processCpuUsage = process.cpu_percent()
-    currentCpuUsage = psutil.cpu_percent(interval=checkInterval)
-    currentProcessCount = len(psutil.pids())
-    if currentCpuUsage > warningThreshold or currentCpuUsage > 2 * average(cpuUsageHistory):
-        print('Warning: CPU usage is High')
-        for process in psutil.process_iter():
-            pid = process.pid
-            if pid == 0:
-                continue
-            try:
-                coresUsed = len(process.cpu_affinity())
-                processCpuUsage = process.cpu_percent() / coresUsed
-            except psutil.AccessDenied:
-                coresUsed = 0
-                continue
-            if processCpuUsage > currentCpuUsage / 2:
-                print('Root Cause: One particular process is taking more than half of CPU usage')
-                print('            ID        :' + str(pid))
-                print('            Name      :' + str(process.name()))
-                print('            Cores Used:' + str(coresUsed))
-                print('            CPU Used  :' + str(processCpuUsage))
-                problemRootCauseFound = True
-        if currentProcessCount > 2 * average(processCountHistory):
-            print('Root Cause: There are lot of new process running than usual')
-            print('            Average process count: {}'.format(average(processCountHistory)))
-            print('            Current process count: {}'.format(currentProcessCount))
-            problemRootCauseFound = True
-        if not problemRootCauseFound:
-            print('Root Cause: CPU Usage is High for unknown reason')
-        problemRootCauseFound = False
-    cpuUsageHistory.pop(0)
-    cpuUsageHistory.append(currentCpuUsage)
-    processCountHistory.pop(0)
-    processCountHistory.append(currentProcessCount)
+        if process.pid == 0:
+            continue
+        try:
+            processCpuUsage = process.cpu_percent() / cpuCores
+            processCurrentUsage[process.pid] = processCpuUsage
+            if process.pid in processHistoryUsage.keys():
+                if processHistoryUsage[process.pid] and processCpuUsage > processWarningThreshold * processHistoryUsage[process.pid]:
+                    print('Warning: This process has increased its CPU usage by {} times in the past {} secs'.format(processWarningThreshold, checkInterval))
+                    print('         ID             :' + str(process.pid))
+                    print('         Name           :' + str(process.name()))
+                    print('         Previous usage :' + str(processHistoryUsage[process.pid]))
+                    print('         Current usage  :' + str(processCpuUsage))
+        except psutil.AccessDenied:
+            continue
+    processHistoryUsage = processCurrentUsage.copy()
+    processCurrentUsage.clear()
+    time.sleep(checkInterval)

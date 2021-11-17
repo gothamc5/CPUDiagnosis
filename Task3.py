@@ -9,6 +9,7 @@ historyDuration = 120
 warningThreshold = 90
 currentProcessCount = 0
 currentCpuUsage = 0
+cpuCores = psutil.cpu_count()
 
 
 def average(listToAvg):
@@ -23,7 +24,7 @@ while x > 0:
 
 while True:
     for process in psutil.process_iter():
-        processCpuUsage = process.cpu_percent()
+        process.cpu_percent()
     currentCpuUsage = psutil.cpu_percent(interval=checkInterval)
     currentProcessCount = len(psutil.pids())
     if currentCpuUsage > warningThreshold or currentCpuUsage > 2 * average(cpuUsageHistory):
@@ -34,7 +35,7 @@ while True:
                 continue
             try:
                 coresUsed = len(process.cpu_affinity())
-                processCpuUsage = process.cpu_percent() / coresUsed
+                processCpuUsage = process.cpu_percent() / cpuCores
             except psutil.AccessDenied:
                 coresUsed = 0
                 continue

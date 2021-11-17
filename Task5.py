@@ -2,9 +2,10 @@
 import socket
 
 portsCheckList = [22, 23, 53, 80, 443]
+hostIP = '127.0.0.1'
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 for checkPort in portsCheckList:
-    portStatus = sock.connect_ex(('127.0.0.1', checkPort))
+    portStatus = sock.connect_ex((hostIP, checkPort))
     if portStatus == 0:
         print('Port {} is Open'.format(checkPort))
     else:

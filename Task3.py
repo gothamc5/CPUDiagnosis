@@ -5,8 +5,8 @@ import time
 cpuUsageHistory = list()
 processCountHistory = list()
 problemRootCauseFound = False
-checkInterval = 2
-historyDuration = 10
+checkInterval = 5
+historyDuration = 120
 warningThreshold = 90
 currentProcessCount = 0
 currentCpuUsage = 0
@@ -47,7 +47,6 @@ while True:
                 print('            Cores Used:' + str(coresUsed))
                 print('            CPU Used  :' + str(processCpuUsage))
                 print('            Process   :' + str(process))
-                print('--------------------------------')
                 problemRootCauseFound = True
         if currentProcessCount > 2 * average(processCountHistory):
             print('Root Cause: There are lot of new process running than usual')
@@ -56,10 +55,8 @@ while True:
             problemRootCauseFound = True
         if not problemRootCauseFound:
             print('Root Cause: CPU Usage is High for unknown reason')
-            problemRootCauseFound = False
+        problemRootCauseFound = False
     cpuUsageHistory.pop(0)
     cpuUsageHistory.append(currentCpuUsage)
     processCountHistory.pop(0)
     processCountHistory.append(currentProcessCount)
-    print(cpuUsageHistory)
-    print(processCountHistory)

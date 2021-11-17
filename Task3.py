@@ -1,4 +1,4 @@
-# Task 3 – CPU Problem Diagnoser
+# Part A - Task 3 : CPU Problem Diagnoser
 import psutil
 
 cpuUsageHistory = list()

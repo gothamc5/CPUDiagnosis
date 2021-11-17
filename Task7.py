@@ -1,4 +1,4 @@
-# Task 7 – Network Checker System
+# Part B - Task 7 : Network Checker System
 import socket
 import requests
 

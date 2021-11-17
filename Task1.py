@@ -1,4 +1,4 @@
-# Task 1 – Basic CPU Monitor
+# Part A - Task 1 : Basic CPU Monitor
 import psutil
 
 checkInterval = 5

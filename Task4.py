@@ -1,4 +1,4 @@
-# Task 4 – Process-based CPU Problem Diagnoser
+# Part A - Task 4 : Process-based CPU Problem Diagnoser
 import time
 import psutil
 

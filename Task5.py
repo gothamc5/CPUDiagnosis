@@ -1,4 +1,4 @@
-# Task 5 – Port State Checker
+# Part B - Task 5 : Port State Checker
 import socket
 
 portsCheckList = [22, 23, 53, 80, 443]

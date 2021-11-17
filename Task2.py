@@ -1,4 +1,4 @@
-# Task 2 – Intelligent CPU Monitor
+# Part A - Task 2 : Intelligent CPU Monitor
 import psutil
 import time
 

@@ -1,4 +1,4 @@
-# Task 6 – Connection Status Checker
+# Part B - Task 6 : Connection Status Checker
 import requests
 
 testUrlList = ['http://www.google.com', 'https://en.wikipedia.org/wiki/Main_Page']
